@@ -62,6 +62,7 @@ fun BusinessCardScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(mint)
+
     ) {
         // Profile ở chính giữa
         Column(
@@ -78,8 +79,9 @@ fun BusinessCardScreen() {
         // Contact ở góc dưới-trái
         Column(
             modifier = Modifier
-                .align(Alignment.BottomStart)
+                .align(Alignment.BottomCenter)
                 .padding(start = 16.dp, bottom = 16.dp)
+
         ) {
             ContactSection(
                 phone = "+84 868 185 758",
@@ -138,9 +140,8 @@ fun ContactSection(
     social: String,
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Start
     ) {
         ContactRow(icon = {
             Icon(imageVector = Icons.Filled.Phone, contentDescription = "Phone", tint = Color(0xFF3DDC84))
