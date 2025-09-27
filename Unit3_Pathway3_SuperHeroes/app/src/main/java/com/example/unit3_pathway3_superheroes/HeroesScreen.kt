@@ -29,7 +29,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 @Composable
 fun HeroListItem(
     hero: Hero,
@@ -93,6 +95,36 @@ fun HeroesList(
                 modifier = Modifier.padding(horizontal = 16.dp) // Padding trái phải cho mỗi item
             )
         }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SuperheroesTopAppBar(modifier: Modifier = Modifier) {
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.displayLarge
+            )
+        },
+        modifier = modifier
+    )
+}
+
+
+@Composable
+fun SuperheroesApp() {
+    Scaffold(
+        topBar = {
+            SuperheroesTopAppBar()
+        }
+    ) { it -> // 'it' chứa giá trị padding mà TopAppBar chiếm dụng
+        HeroesList(
+            heroes = HeroesRepository.heroes,
+            contentPadding = it // Truyền padding này vào LazyColumn
+        )
     }
 }
 

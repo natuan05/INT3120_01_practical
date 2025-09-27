@@ -29,11 +29,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HeroesList(
-                        heroes = HeroesRepository.heroes,
-                        // Thêm padding trên cùng cho danh sách
-                        contentPadding = PaddingValues(top = 16.dp)
-                    )
+                    SuperheroesApp() // Gọi Composable chính
                 }
 
             }
