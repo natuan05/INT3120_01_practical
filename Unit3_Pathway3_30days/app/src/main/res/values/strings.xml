@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name">30 Ngày UX/UI</string>
+
+    <string name="day1_title">Phân biệt UX và UI</string>
+    <string name="day1_desc">UX (Trải nghiệm Người dùng) là cảm nhận tổng thể của người dùng. UI (Giao diện Người dùng) là vẻ ngoài và cách sắp xếp các thành phần. UX là hành trình, UI là phương tiện.</string>
+
+    <string name="day2_title">Nguyên tắc Thiết kế Cốt lõi</string>
+    <string name="day2_desc">Tìm hiểu về các nguyên tắc cơ bản như Cân bằng, Tương phản, Phân cấp, Lặp lại, Gần gũi, Căn lề và Khoảng trắng. Chúng là nền tảng của mọi thiết kế tốt.</string>
+
+    <string name="day3_title">Nghiên cứu Người dùng</string>
+    <string name="day3_desc">Thiết kế không phải cho bạn, mà cho người dùng. Học các phương pháp như phỏng vấn, khảo sát để hiểu nhu cầu và khó khăn của họ.</string>
+
+    <string name="day4_title">Xây dựng Chân dung Người dùng (Persona)</string>
+    <string name="day4_desc">Tạo ra các nhân vật hư cấu đại diện cho nhóm người dùng mục tiêu của bạn. Persona giúp cả nhóm tập trung vào một đối tượng cụ thể.</string>
+
+    <string name="day5_title">Kiến trúc Thông tin (IA)</string>
+    <string name="day5_desc">Sắp xếp và cấu trúc nội dung một cách logic. Mục tiêu là giúp người dùng tìm thấy thông tin họ cần một cách dễ dàng và nhanh chóng.</string>
+
+    <string name="day6_title">Sơ đồ Luồng người dùng (User Flow)</string>
+    <string name="day6_desc">Vẽ ra các con đường mà người dùng có thể đi để hoàn thành một tác vụ trên trang web của bạn. Giúp phát hiện các điểm bất hợp lý trong hành trình.</string>
+
+    <string name="day7_title">Wireframing</string>
+    <string name="day7_desc">Tạo các bản phác thảo cấu trúc cơ bản (bố cục) của trang web mà không cần quan tâm đến màu sắc hay hình ảnh. Tập trung vào chức năng và vị trí.</string>
+
+    <string name="day8_title">Prototyping</string>
+    <string name="day8_desc">Tạo ra các phiên bản tương tác được của thiết kế. Prototype giúp bạn và người dùng có thể "trải nghiệm" sản phẩm trước khi viết code.</string>
+
+    <string name="day9_title">Lý thuyết Màu sắc</string>
+    <string name="day9_desc">Màu sắc gợi lên cảm xúc. Học cách sử dụng bánh xe màu, tạo bảng màu hài hòa và hiểu ý nghĩa của màu sắc trong thiết kế web.</string>
+
+    <string name="day10_title">Typography - Nghệ thuật Chữ</string>
+    <string name="day10_desc">Lựa chọn và kết hợp phông chữ để đảm bảo tính dễ đọc và thể hiện đúng tinh thần thương hiệu. Font chữ là giọng nói của thiết kế.</string>
+
+    <string name="day11_title">Hệ thống Lưới (Grid System)</string>
+    <string name="day11_desc">Sử dụng lưới (ví dụ: lưới 12 cột) để căn chỉnh các thành phần một cách nhất quán, tạo ra một giao diện ngăn nắp và cân bằng.</string>
+
+    <string name="day12_title">Phân cấp Thị giác (Visual Hierarchy)</string>
+    <string name="day12_desc">Sắp xếp các yếu tố để hướng mắt người dùng đến những thông tin quan trọng nhất trước tiên. Sử dụng kích thước, màu sắc và vị trí để tạo phân cấp.</string>
+
+    <string name="day13_title">Khoảng trắng (Whitespace)</string>
+    <string name="day13_desc">Khoảng trắng không phải là không gian lãng phí. Nó giúp giao diện "dễ thở", tăng cường sự tập trung và cải thiện tính dễ đọc.</string>
+
+    <string name="day14_title">Thiết kế Hướng đến sự Đơn giản</string>
+    <string name="day14_desc">"Less is more." Loại bỏ những yếu tố không cần thiết để làm nổi bật những gì thực sự quan trọng. Sự đơn giản giúp người dùng dễ dàng hơn.</string>
+
+    <string name="day15_title">Tính nhất quán trong Thiết kế</string>
+    <string name="day15_desc">Sử dụng lại các thành phần, màu sắc và kiểu chữ một cách nhất quán trên toàn bộ trang web để tạo ra một trải nghiệm liền mạch và đáng tin cậy.</string>
+
+    <string name="day16_title">Các Mẫu thiết kế (Design Patterns)</string>
+    <string name="day16_desc">Học các giải pháp phổ biến cho các vấn đề thiết kế thường gặp, ví dụ: thanh điều hướng, biểu mẫu, thẻ sản phẩm. Không cần phải phát minh lại bánh xe.</string>
+
+    <string name="day17_title">Thiết kế cho Form</string>
+    <string name="day17_desc">Làm cho việc điền biểu mẫu trở nên dễ dàng và ít gây khó chịu nhất có thể. Ghi nhãn rõ ràng, thông báo lỗi hữu ích và nhóm các trường liên quan.</string>
+
+    <string name="day18_title">Nút và Lời kêu gọi Hành động (CTA)</string>
+    <string name="day18_desc">Thiết kế các nút bấm nổi bật và có văn bản rõ ràng, thôi thúc người dùng thực hiện hành động mong muốn (ví dụ: "Đăng ký ngay", "Thêm vào giỏ hàng").</string>
+
+    <string name="day19_title">Microinteractions</string>
+    <string name="day19_desc">Những hoạt ảnh hoặc phản hồi nhỏ khi người dùng tương tác (ví dụ: nút "like" bắn ra tim). Chúng làm cho trang web trở nên sống động và thú vị hơn.</string>
+
+    <string name="day20_title">Thiết kế Responsive</string>
+    <string name="day20_desc">Đảm bảo trang web của bạn trông đẹp và hoạt động tốt trên mọi kích thước màn hình, từ điện thoại di động, máy tính bảng đến máy tính để bàn.</string>
+
+    <string name="day21_title">Mobile-First Design</string>
+    <string name="day21_desc">Bắt đầu quá trình thiết kế với màn hình nhỏ nhất (di động) trước, sau đó mới mở rộng ra các màn hình lớn hơn. Giúp bạn tập trung vào những gì cốt lõi.</string>
+
+    <string name="day22_title">Tiếp cận (Accessibility - a11y)</string>
+    <string name="day22_desc">Thiết kế cho tất cả mọi người, bao gồm cả người khuyết tật. Đảm bảo độ tương phản màu đủ cao, văn bản có thể đọc được và hình ảnh có mô tả thay thế.</string>
+
+    <string name="day23_title">Tốc độ Tải trang</string>
+    <string name="day23_desc">Tốc độ là một phần của UX. Tối ưu hóa hình ảnh và tài nguyên để trang web tải nhanh. Người dùng sẽ không chờ đợi một trang web chậm chạp.</string>
+
+    <string name="day24_title">Hệ thống Thiết kế (Design System)</string>
+    <string name="day24_desc">Tạo một bộ sưu tập các thành phần có thể tái sử dụng, được quản lý bởi các tiêu chuẩn rõ ràng. Giúp đảm bảo tính nhất quán và tăng tốc độ làm việc.</string>
+
+    <string name="day25_title">Kiểm thử Người dùng (User Testing)</string>
+    <string name="day25_desc">Quan sát người dùng thực sự tương tác với thiết kế của bạn để tìm ra các vấn đề mà bạn có thể đã bỏ qua. Đây là cách tốt nhất để xác thực giả định.</string>
+
+    <string name="day26_title">Phân tích Phản hồi</string>
+    <string name="day26_desc">Học cách thu thập, phân loại và rút ra những hiểu biết sâu sắc từ phản hồi của người dùng và các bên liên quan để cải thiện thiết kế.</string>
+
+    <string name="day27_title">A/B Testing</string>
+    <string name="day27_desc">Tạo ra hai phiên bản (A và B) của một thiết kế và cho người dùng xem ngẫu nhiên để xem phiên bản nào hoạt động hiệu quả hơn dựa trên dữ liệu.</string>
+
+    <string name="day28_title">Các Xu hướng Thiết kế Web</string>
+    <string name="day28_desc">Tìm hiểu về các phong cách đang thịnh hành như Dark Mode, Neumorphism, Glassmorphism... nhưng hãy nhớ áp dụng chúng một cách có mục đích, không chỉ vì nó "hot".</string>
+
+    <string name="day29_title">Hợp tác với Lập trình viên</string>
+    <string name="day29_desc">Học cách "bàn giao" thiết kế của bạn cho đội ngũ phát triển một cách hiệu quả, bao gồm cung cấp tài sản, thông số và hiểu các giới hạn kỹ thuật.</string>
+
+    <string name="day30_title">Xây dựng Portfolio</string>
+    <string name="day30_desc">Trình bày các dự án của bạn một cách chuyên nghiệp. Giải thích quy trình thiết kế, những thách thức và kết quả đạt được. Portfolio là CV của một nhà thiết kế.</string>
+</resources>
