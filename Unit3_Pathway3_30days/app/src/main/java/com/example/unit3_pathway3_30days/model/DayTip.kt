@@ -7,5 +7,6 @@ data class DayTip(
     val day: Int,
     @StringRes val titleRes: Int,
     @StringRes val descriptionRes: Int,
-    @DrawableRes val imageRes: Int
+    @DrawableRes val imageRes: Int,
+    var isExpanded: Boolean = false
 )

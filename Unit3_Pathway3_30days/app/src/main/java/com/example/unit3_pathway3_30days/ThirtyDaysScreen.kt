@@ -24,17 +24,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.Composable
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 
+
+// Sửa lại DayTipCard: Không còn tự quản lý state `expanded` nữa
 @Composable
-fun DayTipCard(tip: DayTip, modifier: Modifier = Modifier) {
-    var expanded by remember { mutableStateOf(false) }
-
+fun DayTipCard(
+    tip: DayTip,
+    onClick: () -> Unit, // Nhận vào một sự kiện onClick
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
@@ -48,7 +51,7 @@ fun DayTipCard(tip: DayTip, modifier: Modifier = Modifier) {
                         stiffness = Spring.StiffnessMedium
                     )
                 )
-                .clickable { expanded = !expanded }
+                .clickable(onClick = onClick) // Gọi sự kiện onClick
         ) {
             Column(
                 modifier = Modifier
@@ -74,7 +77,8 @@ fun DayTipCard(tip: DayTip, modifier: Modifier = Modifier) {
                 contentScale = ContentScale.Crop
             )
 
-            if (expanded) {
+            // Đọc trạng thái `expanded` trực tiếp từ đối tượng `tip`
+            if (tip.isExpanded) {
                 Text(
                     text = stringResource(id = tip.descriptionRes),
                     style = MaterialTheme.typography.bodyLarge,
@@ -85,9 +89,11 @@ fun DayTipCard(tip: DayTip, modifier: Modifier = Modifier) {
     }
 }
 
+// Sửa lại ThirtyDaysList: Nhận vào danh sách và sự kiện
 @Composable
 fun ThirtyDaysList(
     tips: List<DayTip>,
+    onCardClick: (Int) -> Unit, // Nhận vào sự kiện với tham số là day number
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
@@ -99,15 +105,22 @@ fun ThirtyDaysList(
         items(tips) { tip ->
             DayTipCard(
                 tip = tip,
+                onClick = { onCardClick(tip.day) }, // Truyền sự kiện xuống
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
     }
 }
 
+// Sửa lại ThirtyDaysApp: Khởi tạo ViewModel và kết nối tất cả
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ThirtyDaysApp() {
+fun ThirtyDaysApp(
+    viewModel: ThirtyDaysViewModel = viewModel() // Khởi tạo ViewModel
+) {
+    // Lắng nghe sự thay đổi trạng thái từ ViewModel
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -121,7 +134,8 @@ fun ThirtyDaysApp() {
         }
     ) { paddingValues ->
         ThirtyDaysList(
-            tips = TipsRepository.tips,
+            tips = uiState.tips, // Lấy danh sách từ uiState
+            onCardClick = viewModel::toggleExpansion, // Gửi sự kiện tới ViewModel
             contentPadding = paddingValues
         )
     }
@@ -131,6 +145,9 @@ fun ThirtyDaysApp() {
 @Composable
 fun DayTipCardPreview() {
     Unit3_Pathway3_30daysTheme {
-        DayTipCard(tip = TipsRepository.tips[0])
+        DayTipCard(
+            tip = TipsRepository.tips[0].copy(isExpanded = false), // Preview với trạng thái không mở rộng
+            onClick = {}
+        )
     }
 }
