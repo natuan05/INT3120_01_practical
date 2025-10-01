@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Hanoi City Guide</string>
+
+    <string name="category_coffee">Quán Cà phê</string>
+    <string name="category_parks">Công viên</string>
+    <string name="category_malls">Trung tâm Mua sắm</string>
+    <string name="category_bun_dau">Quán Bún đậu Mắm tôm</string>
+
+    <string name="coffee_phe_la_name">Phê La</string>
+    <string name="coffee_phe_la_desc">Nổi bật với trà Ô Long và không gian thoáng đãng, phong cách trẻ trung.</string>
+    <string name="coffee_ban_cong_name">Ban Công Cafe</string>
+    <string name="coffee_ban_cong_desc">Mang phong cách cổ kính ấm cúng, cầu thang gỗ, không gian đẹp để chụp ảnh.</string>
+    <string name="coffee_cong_cafe_name">Cộng Cà Phê</string>
+    <string name="coffee_cong_cafe_desc">Chuỗi quán nổi tiếng, không gian dễ chịu, có view đẹp ra phố cổ.</string>
+
+    <string name="park_yen_so_name">Công viên Yên Sở</string>
+    <string name="park_yen_so_desc">Công viên xanh lớn nhất Hà Nội, không gian rộng, có nhiều hoạt động vui chơi.</string>
+    <string name="park_thu_le_name">Công viên Thủ Lệ</string>
+    <string name="park_thu_le_desc">Không gian rộng thoáng, nhiều lối đi bộ trong xanh, dễ di chuyển từ trung tâm.</string>
+    <string name="park_thong_nhat_name">Công viên Thống Nhất</string>
+    <string name="park_thong_nhat_desc">Công viên lớn giữa thành phố, có hồ nước, thích hợp đi dạo, tập thể thao.</string>
+
+    <string name="mall_times_city_name">Vincom Mega Mall Times City</string>
+    <string name="mall_times_city_desc">Trung tâm thương mại lớn với khu mua sắm, giải trí, thủy cung, khu vui chơi.</string>
+    <string name="mall_aeon_long_bien_name">Aeon Mall Long Biên</string>
+    <string name="mall_aeon_long_bien_desc">Trung tâm mua sắm hiện đại, nhiều thương hiệu, khu ăn uống và giải trí phong phú.</string>
+    <string name="mall_trang_tien_name">Tràng Tiền Plaza</string>
+    <string name="mall_trang_tien_desc">Trung tâm sầm uất ở trung tâm Hà Nội, nhiều thương hiệu nổi tiếng.</string>
+
+    <string name="bundau_trung_huong_name">Bún đậu Trung Hương</string>
+    <string name="bundau_trung_huong_desc">Quán nổi tiếng, dùng đậu làng Mơ, mắm tôm đặc trưng, nhiều topping ăn kèm.</string>
+    <string name="bundau_hai_anh_name">Bún đậu Hải Anh</string>
+    <string name="bundau_hai_anh_desc">Nằm trên phố trung tâm, mẹt bún đậu hấp dẫn với đậu rán giòn, thịt, chả cốm.</string>
+    <string name="bundau_dong_thai_name">Bún đậu số 11 Đông Thái</string>
+    <string name="bundau_dong_thai_desc">Quán chuẩn vị, nằm ở Hoàn Kiếm, dễ tìm khi đi quanh phố cổ.</string>
+
+</resources>
