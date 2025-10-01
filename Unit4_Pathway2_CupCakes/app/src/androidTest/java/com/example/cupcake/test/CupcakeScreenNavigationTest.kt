@@ -3,47 +3,134 @@ package com.example.cupcake.test
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import com.example.cupcake.CupcakeApp
+import com.example.cupcake.CupcakeScreen
+import com.example.cupcake.R
 import org.junit.Before
 import org.junit.Rule
-import com.example.cupcake.CupcakeScreen
-import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class CupcakeScreenNavigationTest {
 
-    /**
-     * Quy tắc kiểm thử (test rule) để tương tác với các Composable.
-     */
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    /**
-     * Bộ điều khiển điều hướng (NavController) đặc biệt dành cho việc kiểm thử.
-     */
     private lateinit var navController: TestNavHostController
 
-    /**
-     * Hàm này được đánh dấu @Before, nó sẽ tự động chạy trước mỗi bài kiểm thử (@Test).
-     * Nhiệm vụ của nó là thiết lập môi trường kiểm thử.
-     */
     @Before
     fun setupCupcakeNavHost() {
         composeTestRule.setContent {
-            // 1. Khởi tạo TestNavHostController
             navController = TestNavHostController(LocalContext.current).apply {
                 navigatorProvider.addNavigator(ComposeNavigator())
             }
-            // 2. "Tiêm" NavController này vào ứng dụng để chúng ta có thể kiểm soát
             CupcakeApp(navController = navController)
         }
     }
 
-    // Các bài kiểm thử sẽ được viết ở đây trong các bước tiếp theo
+    // --- Các bài kiểm thử ---
+
     @Test
     fun cupcakeNavHost_verifyStartDestination() {
         navController.assertCurrentRouteName(CupcakeScreen.Start.name)
+    }
+
+    @Test
+    fun cupcakeNavHost_verifyBackNavigationNotShownOnStartOrderScreen() {
+        val backText = composeTestRule.activity.getString(R.string.back_button)
+        composeTestRule.onNodeWithContentDescription(backText).assertDoesNotExist()
+    }
+
+    @Test
+    fun cupcakeNavHost_clickOneCupcake_navigatesToSelectFlavorScreen() {
+        composeTestRule.onNodeWithStringId(R.string.one_cupcake).performClick()
+        navController.assertCurrentRouteName(CupcakeScreen.Flavor.name)
+    }
+
+    @Test
+    fun cupcakeNavHost_clickNextOnFlavorScreen_navigatesToPickupScreen() {
+        navigateToFlavorScreen()
+        composeTestRule.onNodeWithStringId(R.string.next).performClick()
+        navController.assertCurrentRouteName(CupcakeScreen.Pickup.name)
+    }
+
+    @Test
+    fun cupcakeNavHost_clickBackOnFlavorScreen_navigatesToStartOrderScreen() {
+        navigateToFlavorScreen()
+        performNavigateUp()
+        navController.assertCurrentRouteName(CupcakeScreen.Start.name)
+    }
+
+    @Test
+    fun cupcakeNavHost_clickCancelOnFlavorScreen_navigatesToStartOrderScreen() {
+        navigateToFlavorScreen()
+        composeTestRule.onNodeWithStringId(R.string.cancel).performClick()
+        navController.assertCurrentRouteName(CupcakeScreen.Start.name)
+    }
+
+    @Test
+    fun cupcakeNavHost_clickNextOnPickupScreen_navigatesToSummaryScreen() {
+        navigateToPickupScreen()
+        composeTestRule.onNodeWithStringId(R.string.next).performClick()
+        navController.assertCurrentRouteName(CupcakeScreen.Summary.name)
+    }
+
+    @Test
+    fun cupcakeNavHost_clickBackOnPickupScreen_navigatesToFlavorScreen() {
+        navigateToPickupScreen()
+        performNavigateUp()
+        navController.assertCurrentRouteName(CupcakeScreen.Flavor.name)
+    }
+
+    @Test
+    fun cupcakeNavHost_clickCancelOnPickupScreen_navigatesToStartOrderScreen() {
+        navigateToPickupScreen()
+        composeTestRule.onNodeWithStringId(R.string.cancel).performClick()
+        navController.assertCurrentRouteName(CupcakeScreen.Start.name)
+    }
+
+    @Test
+    fun cupcakeNavHost_clickCancelOnSummaryScreen_navigatesToStartOrderScreen() {
+        navigateToSummaryScreen()
+        composeTestRule.onNodeWithStringId(R.string.cancel).performClick()
+        navController.assertCurrentRouteName(CupcakeScreen.Start.name)
+    }
+
+
+    // --- Các hàm trợ giúp ---
+
+    private fun navigateToFlavorScreen() {
+        composeTestRule.onNodeWithStringId(R.string.one_cupcake).performClick()
+        composeTestRule.onNodeWithStringId(R.string.chocolate).performClick()
+    }
+
+    private fun navigateToPickupScreen() {
+        navigateToFlavorScreen()
+        composeTestRule.onNodeWithStringId(R.string.next).performClick()
+    }
+
+    private fun navigateToSummaryScreen() {
+        navigateToPickupScreen()
+        composeTestRule.onNodeWithText(getFormattedDate()).performClick()
+        composeTestRule.onNodeWithStringId(R.string.next).performClick()
+    }
+
+    private fun performNavigateUp() {
+        val backText = composeTestRule.activity.getString(R.string.back_button)
+        composeTestRule.onNodeWithContentDescription(backText).performClick()
+    }
+
+    private fun getFormattedDate(): String {
+        val calendar = Calendar.getInstance()
+        calendar.add(java.util.Calendar.DATE, 1)
+        val formatter = SimpleDateFormat("E MMM d", Locale.getDefault())
+        return formatter.format(calendar.time)
     }
 }
