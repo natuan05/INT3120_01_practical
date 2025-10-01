@@ -1,6 +1,7 @@
 package com.example.diceroller
 
 import android.os.Bundle
+import android.util.Log // <--- 1. Import lớp Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -32,16 +33,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.diceroller.ui.theme.DiceRollerTheme
 
+// 2. Tạo một TAG hằng số để lọc log dễ dàng
+private const val TAG = "MainActivity"
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // LOG: Ghi lại khi Activity được tạo
+        Log.d(TAG, "onCreate: Activity được tạo.")
+
         setContent {
-            // Hoist trạng thái dark mode lên đây và truyền vào Theme
             var dark by rememberSaveable { mutableStateOf(false) }
 
             DiceRollerTheme(darkTheme = dark) {
-                // Sơn nền theo theme (rất quan trọng để thấy nền đổi màu)
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -49,8 +55,9 @@ class MainActivity : ComponentActivity() {
                     DiceRollerApp(
                         dark = dark,
                         onToggleDark = { isDark ->
+                            // LOG: Ghi lại sự kiện thay đổi theme
+                            Log.d(TAG, "onToggleDark: Chuyển sang Dark Mode = $isDark")
                             dark = isDark
-                            // (tuỳ chọn) đồng bộ AppCompat cho toàn app
                             AppCompatDelegate.setDefaultNightMode(
                                 if (isDark) AppCompatDelegate.MODE_NIGHT_YES
                                 else AppCompatDelegate.MODE_NIGHT_NO
@@ -91,9 +98,11 @@ fun DiceWithButtonAndImage(
     dark: Boolean,
     onToggleDark: (Boolean) -> Unit
 ) {
-    var result by rememberSaveable { mutableStateOf(1) }
+    // LOG: Quan sát khi Composable này được vẽ lại (recomposed)
+    // Bạn sẽ thấy log này xuất hiện mỗi khi trạng thái (result, rotationTarget) thay đổi.
+    Log.d(TAG, "DiceWithButtonAndImage: Composable được vẽ lại.")
 
-    // Điều khiển góc quay mỗi lần bấm (mỗi lần +360 độ)
+    var result by rememberSaveable { mutableStateOf(1) }
     var rotationTarget by remember { mutableStateOf(0f) }
     val rotationDeg by animateFloatAsState(
         targetValue = rotationTarget,
@@ -105,12 +114,9 @@ fun DiceWithButtonAndImage(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Toggle Dark Mode (điều khiển trực tiếp theme Compose)
         ThemeToggleRow(dark = dark, onToggleDark = onToggleDark)
-
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Chuyển ảnh mượt khi result đổi
         AnimatedContent(
             targetState = result,
             transitionSpec = {
@@ -141,6 +147,9 @@ fun DiceWithButtonAndImage(
             haptics.performHapticFeedback(HapticFeedbackType.LongPress)
             result = (1..6).random()
             rotationTarget += 360f
+
+            // LOG: Ghi lại kết quả mới mỗi khi tung xúc xắc
+            Log.d(TAG, "Button onClick: Tung xúc xắc! Kết quả mới là $result")
         }) {
             Text(text = stringResource(R.string.roll))
         }
