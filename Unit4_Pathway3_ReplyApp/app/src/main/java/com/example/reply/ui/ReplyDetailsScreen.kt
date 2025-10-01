@@ -51,12 +51,15 @@ import com.example.reply.R
 import com.example.reply.data.Email
 import com.example.reply.data.MailboxType
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 
 @Composable
 fun ReplyDetailsScreen(
     replyUiState: ReplyUiState,
     onBackPressed: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isFullScreen: Boolean = false
 ) {
     BackHandler {
         // Gọi lại hàm onBackPressed đã được truyền từ ViewModel
@@ -70,22 +73,27 @@ fun ReplyDetailsScreen(
                 .background(color = MaterialTheme.colorScheme.inverseOnSurface)
         ) {
             item {
-                ReplyDetailsScreenTopBar(
-                    onBackPressed,
-                    replyUiState,
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            bottom = dimensionResource(R.dimen.detail_topbar_padding_bottom),
-                            top = dimensionResource(R.dimen.topbar_padding_vertical)
-                        )
-                )
+                if(isFullScreen) {
+                    ReplyDetailsScreenTopBar(
+                        onBackPressed,
+                        replyUiState,
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                bottom = dimensionResource(R.dimen.detail_topbar_padding_bottom),
+                                top = dimensionResource(R.dimen.topbar_padding_vertical)
+                            )
+                    )
+                }
                 ReplyEmailDetailsCard(
                     email = replyUiState.currentSelectedEmail,
                     mailboxType = replyUiState.currentMailbox,
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .padding(horizontal = dimensionResource(R.dimen.detail_card_outer_padding_horizontal))
+                    isFullScreen = isFullScreen,
+                    modifier = if (isFullScreen) {
+                        Modifier.padding(horizontal = dimensionResource(R.dimen.detail_card_outer_padding_horizontal))
+                    } else {
+                        Modifier.padding(end = dimensionResource(R.dimen.detail_card_outer_padding_horizontal))
+                    }
                 )
             }
         }
@@ -128,16 +136,16 @@ private fun ReplyDetailsScreenTopBar(
     }
 }
 
+/**
+ * Composable hiển thị chi tiết nội dung của một email.
+ */
 @Composable
 private fun ReplyEmailDetailsCard(
     email: Email,
     mailboxType: MailboxType,
     modifier: Modifier = Modifier,
+    isFullScreen: Boolean = false
 ) {
-    val context = LocalContext.current
-    val displayToast = { text: String ->
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-    }
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -147,25 +155,44 @@ private fun ReplyEmailDetailsCard(
                 .fillMaxWidth()
                 .padding(dimensionResource(R.dimen.detail_card_inner_padding))
         ) {
+            // Hiển thị phần header (người gửi, avatar)
             DetailsScreenHeader(
                 email,
                 Modifier.fillMaxWidth()
             )
-            Text(
-                text = stringResource(email.subject),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.padding(
-                    top = dimensionResource(R.dimen.detail_content_padding_top),
-                    bottom = dimensionResource(R.dimen.detail_expanded_subject_body_spacing)
-                ),
-            )
+
+            // Logic chính: Ẩn/Hiện tiêu đề email
+            if (isFullScreen) {
+                // Nếu là toàn màn hình, chỉ cần một khoảng trống vì tiêu đề đã có ở TopAppBar
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.detail_content_padding_top)))
+            } else {
+                // Nếu không phải toàn màn hình (chế độ 2 ngăn), hiển thị tiêu đề bên trong thẻ
+                Text(
+                    text = stringResource(email.subject),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.padding(
+                        top = dimensionResource(R.dimen.detail_content_padding_top),
+                        bottom = dimensionResource(R.dimen.detail_expanded_subject_body_spacing)
+                    )
+                )
+            }
+
+            // Hiển thị nội dung email
             Text(
                 text = stringResource(email.body),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            DetailsScreenButtonBar(mailboxType, displayToast)
+
+            // Thanh nút bấm hành động (Reply, Reply All,...)
+            val context = LocalContext.current
+            DetailsScreenButtonBar(
+                mailboxType = mailboxType,
+                displayToast = { text ->
+                    Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                }
+            )
         }
     }
 }
