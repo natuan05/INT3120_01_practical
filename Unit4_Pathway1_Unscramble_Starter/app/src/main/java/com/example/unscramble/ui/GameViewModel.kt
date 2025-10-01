@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import com.example.unscramble.data.MAX_NO_OF_WORDS
 import kotlinx.coroutines.flow.update
 import com.example.unscramble.data.SCORE_INCREASE
 class GameViewModel : ViewModel() {
@@ -74,13 +75,25 @@ class GameViewModel : ViewModel() {
     }
 
     private fun updateGameState(updatedScore: Int) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                isGuessedWordWrong = false, // Reset trạng thái lỗi
-                currentScrambledWord = pickRandomWordAndShuffle(), // Lấy từ mới
-                score = updatedScore, // Cập nhật điểm
-                currentWordCount = currentState.currentWordCount.inc() // Tăng số từ
-            )
+        if (usedWords.size == MAX_NO_OF_WORDS) {
+            // Vòng cuối: Cập nhật isGameOver thành true
+            _uiState.update { currentState ->
+                currentState.copy(
+                    isGuessedWordWrong = false,
+                    score = updatedScore,
+                    isGameOver = true
+                )
+            }
+        } else {
+            // Vòng chơi bình thường
+            _uiState.update { currentState ->
+                currentState.copy(
+                    isGuessedWordWrong = false,
+                    currentScrambledWord = pickRandomWordAndShuffle(),
+                    currentWordCount = currentState.currentWordCount.inc(),
+                    score = updatedScore
+                )
+            }
         }
     }
 
