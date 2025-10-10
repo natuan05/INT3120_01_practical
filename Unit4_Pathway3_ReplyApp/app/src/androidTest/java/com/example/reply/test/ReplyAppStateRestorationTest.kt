@@ -1,7 +1,12 @@
 package com.example.reply.test
 
-// ... (Thêm các import cần thiết)
+import androidx.activity.ComponentActivity
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.ui.test.StateRestorationTester
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import com.example.reply.ui.ReplyApp
+import com.example.reply.ui.theme.ReplyTheme
 
 class ReplyAppStateRestorationTest {
 

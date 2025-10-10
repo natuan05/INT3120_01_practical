@@ -1,5 +1,6 @@
 package com.example.lemonade
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,10 +20,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import com.example.lemonade.ui.theme.LemonadeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +46,7 @@ class MainActivity : ComponentActivity() {
                                 Text(
                                     text = "Lemonade",
                                     style = MaterialTheme.typography.titleLarge,
-                                    color = Color.Black        // chữ đen cho nổi bật trên nền vàng
+                                    color = Color.Black
                                 )
                             },
                             modifier = Modifier.height(56.dp),
@@ -56,8 +58,6 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     LemonApp(Modifier.padding(innerPadding))
                 }
-
-
             }
         }
     }
@@ -65,59 +65,92 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun LemonApp(modifier: Modifier = Modifier) {
-    var currentStep by remember { mutableStateOf(1) }
-    var squeezesLeft by remember { mutableStateOf(0) }
+    // SỬA LẠI Ở ĐÂY: Dùng rememberSaveable để lưu trạng thái khi xoay màn hình
+    var currentStep by rememberSaveable { mutableStateOf(1) }
+    var squeezeCount by rememberSaveable { mutableStateOf(0) }
 
-    @StringRes val textRes: Int
-    @DrawableRes val imageRes: Int
-    @StringRes val descRes: Int
-    val onImageClick: () -> Unit
-
-    when (currentStep) {
-        1 -> {
-            textRes = R.string.lemon_select
-            imageRes = R.drawable.lemon_tree
-            descRes = R.string.lemon_tree_content_description
-            onImageClick = {
-                squeezesLeft = (2..4).random()
-                currentStep = 2
-            }
-        }
-        2 -> {
-            textRes = R.string.lemon_squeeze
-            imageRes = R.drawable.lemon_squeeze
-            descRes = R.string.lemon_content_description
-            onImageClick = {
-                squeezesLeft--
-                if (squeezesLeft <= 0) currentStep = 3
-            }
-        }
-        3 -> {
-            textRes = R.string.lemon_drink
-            imageRes = R.drawable.lemon_drink
-            descRes = R.string.lemonade_content_description
-            onImageClick = { currentStep = 4 }
-        }
-        else -> {
-            textRes = R.string.lemon_empty_glass
-            imageRes = R.drawable.lemon_restart
-            descRes = R.string.empty_glass_content_description
-            onImageClick = {
-                squeezesLeft = 0
-                currentStep = 1
-            }
-        }
-    }
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        LemonTextAndImage(
-            textRes = textRes,
-            imageRes = imageRes,
-            contentDescRes = descRes,
-            onImageClick = onImageClick
+        if (currentStep == 3 && isLandscape) {
+            LandscapeDrinkScreen()
+        } else {
+            val imageRes: Int
+            val textRes: Int
+            val descRes: Int
+            val onImageClick: () -> Unit
+
+            when (currentStep) {
+                1 -> {
+                    imageRes = R.drawable.lemon_tree
+                    textRes = R.string.lemon_select
+                    descRes = R.string.lemon_tree_content_description
+                    onImageClick = {
+                        currentStep = 2
+                        squeezeCount = (2..4).random()
+                    }
+                }
+                2 -> {
+                    imageRes = R.drawable.lemon_squeeze
+                    textRes = R.string.lemon_squeeze
+                    descRes = R.string.lemon_content_description
+                    onImageClick = {
+                        squeezeCount--
+                        if (squeezeCount == 0) {
+                            currentStep = 3
+                        }
+                    }
+                }
+                3 -> {
+                    imageRes = R.drawable.lemon_drink
+                    textRes = R.string.lemon_drink
+                    descRes = R.string.lemonade_content_description
+                    onImageClick = { currentStep = 4 }
+                }
+                else -> {
+                    imageRes = R.drawable.lemon_restart
+                    textRes = R.string.lemon_empty_glass
+                    descRes = R.string.empty_glass_content_description
+                    onImageClick = { currentStep = 1 }
+                }
+            }
+
+            LemonTextAndImage(
+                textRes = textRes,
+                imageRes = imageRes,
+                contentDescRes = descRes,
+                onImageClick = onImageClick
+            )
+        }
+    }
+}
+
+
+@Composable
+private fun LandscapeDrinkScreen(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.fillMaxSize().padding(16.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(R.drawable.lemon_drink_no_ice),
+            contentDescription = stringResource(R.string.lemonade_content_description),
+            modifier = Modifier
+                .weight(1f)
+                .padding(8.dp)
+                .clip(RoundedCornerShape(16.dp))
+        )
+        Text(
+            text = stringResource(R.string.ice_melted),
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier
+                .weight(1f)
+                .padding(8.dp)
         )
     }
 }
@@ -150,7 +183,7 @@ fun LemonTextAndImage(
                 .background(Color(0xFFE0F7FA))
                 .border(
                     width = 2.dp,
-                    color = Color(0xFF69CDD8), // RGB(105,205,216)
+                    color = Color(0xFF69CDD8),
                     shape = RoundedCornerShape(4.dp)
                 )
                 .clickable(onClick = onImageClick)
