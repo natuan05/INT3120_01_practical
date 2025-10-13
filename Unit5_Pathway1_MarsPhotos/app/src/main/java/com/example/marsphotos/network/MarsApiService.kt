@@ -25,8 +25,3 @@ interface MarsApiService {
 }
 
 // Đối tượng Singleton để khởi tạo dịch vụ Retrofit
-object MarsApi {
-    val retrofitService: MarsApiService by lazy {
-        retrofit.create(MarsApiService::class.java)
-    }
-}
