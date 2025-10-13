@@ -29,8 +29,10 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.marsphotos.MarsPhotosApplication
+import com.example.marsphotos.network.MarsPhoto
+
 sealed interface MarsUiState {
-    data class Success(val photos: String) : MarsUiState
+    data class Success(val photos: List<MarsPhoto>) : MarsUiState
     object Error : MarsUiState
     object Loading : MarsUiState
 }
@@ -51,14 +53,12 @@ class MarsViewModel(private val marsPhotosRepository: MarsPhotosRepository) : Vi
      * [MarsPhoto] [List] [MutableList].
      */
     // In ui/screens/MarsViewModel.kt
-    private fun getMarsPhotos() {
+     fun getMarsPhotos() {
         viewModelScope.launch {
             marsUiState = MarsUiState.Loading
             marsUiState = try {
-                val listResult = marsPhotosRepository.getMarsPhotos()
-                MarsUiState.Success(
-                    "Success: ${listResult.size} Mars photos retrieved"
-                )
+                val firstPhoto = marsPhotosRepository.getMarsPhotos()[0]
+                MarsUiState.Success(marsPhotosRepository.getMarsPhotos())
             } catch (e: IOException) {
                 MarsUiState.Error
             }
