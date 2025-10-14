@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Unit5_Pathway2_Bookshelf</string>
+    <string name="loading">Đang tải</string>
+    <string name="loading_failed">Không thể tải dữ liệu</string>
+    <string name="retry">Thử lại</string>
+    <string name="book_cover">a</string>
+
+</resources>
