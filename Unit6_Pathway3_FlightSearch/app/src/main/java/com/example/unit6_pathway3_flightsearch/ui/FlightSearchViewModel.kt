@@ -61,8 +61,14 @@ class FlightSearchViewModel(
     }
 
     fun updateSearchQuery(query: String) {
-        _uiState.value = _uiState.value.copy(searchQuery = query)
         viewModelScope.launch {
+            // Cập nhật từ khóa tìm kiếm và RESET sân bay đã chọn
+            _uiState.update {
+                it.copy(
+                    searchQuery = query,
+                    selectedAirport = null
+                )
+            }
             userPreferencesRepository.saveSearchInput(query)
             updateAirportSuggestions(query)
         }
@@ -106,27 +112,19 @@ class FlightSearchViewModel(
 
     fun toggleFavorite(departureCode: String, destinationCode: String) {
         viewModelScope.launch {
-            // Tìm trong danh sách FullFavoriteFlight
-            val flight = favoriteFlights.value.find {
-                it.departure.iataCode == departureCode && it.destination.iataCode == destinationCode
+            val flight = flightDao.getAllFavorites().first().find {
+                it.departureCode == departureCode && it.destinationCode == destinationCode
             }
-
             if (flight == null) {
-                // Nếu chưa có, thêm mới một Favorite
-                addFavorite(
-                    Favorite(
-                        departureCode = departureCode,
-                        destinationCode = destinationCode
-                    )
+                // Thêm vào yêu thích
+                flightDao.addFavorite(
+                    Favorite(departureCode = departureCode, destinationCode = destinationCode)
                 )
             } else {
-                // Nếu đã có, tạo một Favorite tương ứng để xóa
-                removeFavorite(
-                    Favorite(
-                        id = 0, // ID không quan trọng khi xóa bằng đối tượng
-                        departureCode = flight.departure.iataCode,
-                        destinationCode = flight.destination.iataCode
-                    )
+                // Xóa khỏi yêu thích bằng hàm mới
+                flightDao.deleteFavorite(
+                    departureCode = departureCode,
+                    destinationCode = destinationCode
                 )
             }
         }
