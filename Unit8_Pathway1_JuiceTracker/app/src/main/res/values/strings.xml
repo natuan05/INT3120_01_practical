@@ -14,6 +14,11 @@
   ~ limitations under the License.
 -->
 <resources>
+    <plurals name="number_of_stars">
+        <item quantity="one">%d star</item>
+        <item quantity="other">%d stars</item>
+    </plurals>
+
     <string name="app_name">Juice Tracker</string>
     <string name="juice_type">Type of juice</string>
     <string name="delete">Delete</string>
