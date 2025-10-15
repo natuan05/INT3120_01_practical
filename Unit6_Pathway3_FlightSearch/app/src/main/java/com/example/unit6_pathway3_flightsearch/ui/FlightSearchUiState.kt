@@ -10,3 +10,9 @@ data class FlightSearchUiState(
     val flightList: List<Airport> = emptyList(),
     val favoriteFlights: List<Favorite> = emptyList()
 )
+
+
+data class FullFavoriteFlight(
+    val departure: Airport,
+    val destination: Airport
+)

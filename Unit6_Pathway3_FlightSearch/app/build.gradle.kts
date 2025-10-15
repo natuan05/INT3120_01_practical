@@ -66,6 +66,9 @@ dependencies {
     // ViewModel + Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 
+
+    implementation("androidx.compose.animation:animation")
+
     // Test
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

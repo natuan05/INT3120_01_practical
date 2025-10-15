@@ -54,4 +54,7 @@ interface FlightDao {
      */
     @Delete
     suspend fun removeFavorite(flight: Favorite)
+
+    @Query("SELECT * FROM airport WHERE iata_code = :code")
+    suspend fun getAirportByCodeSuspend(code: String): Airport?
 }

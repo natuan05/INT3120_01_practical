@@ -18,7 +18,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
 
 class FlightSearchViewModel(
     private val flightDao: FlightDao,
@@ -29,12 +31,25 @@ class FlightSearchViewModel(
     val uiState: StateFlow<FlightSearchUiState> = _uiState.asStateFlow()
 
     // StateFlow để giữ danh sách yêu thích
-    val favoriteFlights: StateFlow<List<Favorite>> =
-        flightDao.getAllFavorites().stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = emptyList()
-        )
+    val favoriteFlights: StateFlow<List<FullFavoriteFlight>> =
+        flightDao.getAllFavorites() // Bắt đầu với Flow<List<Favorite>>
+            .map { favoriteList ->
+                // Chuyển đổi List<Favorite> thành List<FullFavoriteFlight>
+                favoriteList.mapNotNull { favorite ->
+                    val departure = flightDao.getAirportByCodeSuspend(favorite.departureCode)
+                    val destination = flightDao.getAirportByCodeSuspend(favorite.destinationCode)
+                    if (departure != null && destination != null) {
+                        FullFavoriteFlight(departure, destination)
+                    } else {
+                        null
+                    }
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000L),
+                initialValue = emptyList()
+            )
 
     init {
         viewModelScope.launch {
@@ -63,11 +78,58 @@ class FlightSearchViewModel(
     }
 
     fun selectAirport(airport: Airport) {
-        _uiState.value = _uiState.value.copy(
-            selectedAirport = airport,
-            searchQuery = airport.iataCode,
-            airportSuggestions = emptyList()
-        )
+        viewModelScope.launch {
+            // Lấy danh sách các điểm đến khả thi từ DAO
+            val destinations = flightDao.getPossibleDestinations(airport.iataCode).first()
+            _uiState.update {
+                it.copy(
+                    selectedAirport = airport,
+                    searchQuery = airport.iataCode,
+                    airportSuggestions = emptyList(),
+                    flightList = destinations // <-- Cập nhật danh sách chuyến bay
+                )
+            }
+        }
+    }
+
+    fun addFavorite(flight: Favorite) {
+        viewModelScope.launch {
+            flightDao.addFavorite(flight)
+        }
+    }
+
+    fun removeFavorite(flight: Favorite) {
+        viewModelScope.launch {
+            flightDao.removeFavorite(flight)
+        }
+    }
+
+    fun toggleFavorite(departureCode: String, destinationCode: String) {
+        viewModelScope.launch {
+            // Tìm trong danh sách FullFavoriteFlight
+            val flight = favoriteFlights.value.find {
+                it.departure.iataCode == departureCode && it.destination.iataCode == destinationCode
+            }
+
+            if (flight == null) {
+                // Nếu chưa có, thêm mới một Favorite
+                addFavorite(
+                    Favorite(
+                        departureCode = departureCode,
+                        destinationCode = destinationCode
+                    )
+                )
+            } else {
+                // Nếu đã có, tạo một Favorite tương ứng để xóa
+                removeFavorite(
+                    Favorite(
+                        id = 0, // ID không quan trọng khi xóa bằng đối tượng
+                        departureCode = flight.departure.iataCode,
+                        destinationCode = flight.destination.iataCode
+                    )
+                )
+            }
+        }
     }
 
 
