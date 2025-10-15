@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      https://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,6 +34,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -59,7 +60,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.busschedule.R
-import com.example.busschedule.data.BusSchedule
+import com.example.busschedule.data.Schedule // Sửa import này
 import com.example.busschedule.ui.theme.BusScheduleTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -72,12 +73,12 @@ enum class BusScheduleScreens {
 
 @Composable
 fun BusScheduleApp(
-    viewModel: BusScheduleViewModel = viewModel(factory = BusScheduleViewModel.factory)
+    viewModel: BusScheduleViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val navController = rememberNavController()
     val fullScheduleTitle = stringResource(R.string.full_schedule)
     var topAppBarTitle by remember { mutableStateOf(fullScheduleTitle) }
-    val fullSchedule by viewModel.getFullSchedule().collectAsState(emptyList())
+    val fullSchedule by viewModel.fullSchedule.collectAsState() // Sửa cách lấy dữ liệu
     val onBackHandler = {
         topAppBarTitle = fullScheduleTitle
         navController.navigateUp()
@@ -94,12 +95,12 @@ fun BusScheduleApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = BusScheduleScreens.FullSchedule.name
+            startDestination = BusScheduleScreens.FullSchedule.name,
+            modifier = Modifier.padding(innerPadding)
         ) {
             composable(BusScheduleScreens.FullSchedule.name) {
                 FullScheduleScreen(
                     busSchedules = fullSchedule,
-                    contentPadding = innerPadding,
                     onScheduleClick = { busStopName ->
                         navController.navigate(
                             "${BusScheduleScreens.RouteSchedule.name}/$busStopName"
@@ -115,11 +116,11 @@ fun BusScheduleApp(
             ) { backStackEntry ->
                 val stopName = backStackEntry.arguments?.getString(busRouteArgument)
                     ?: error("busRouteArgument cannot be null")
-                val routeSchedule by viewModel.getScheduleFor(stopName).collectAsState(emptyList())
+                // Sửa cách lấy dữ liệu
+                val routeSchedule by viewModel.getScheduleForStop(stopName).collectAsState()
                 RouteScheduleScreen(
                     stopName = stopName,
                     busSchedules = routeSchedule,
-                    contentPadding = innerPadding,
                     onBack = { onBackHandler() }
                 )
             }
@@ -129,99 +130,78 @@ fun BusScheduleApp(
 
 @Composable
 fun FullScheduleScreen(
-    busSchedules: List<BusSchedule>,
+    busSchedules: List<Schedule>,
     onScheduleClick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+    contentPadding: PaddingValues = PaddingValues(0.dp) // Nhận contentPadding
 ) {
     BusScheduleScreen(
         busSchedules = busSchedules,
         onScheduleClick = onScheduleClick,
-        contentPadding = contentPadding,
-        modifier = modifier
+        modifier = modifier,
+        contentPadding = contentPadding // Truyền xuống
     )
 }
 
 @Composable
 fun RouteScheduleScreen(
     stopName: String,
-    busSchedules: List<BusSchedule>,
+    busSchedules: List<Schedule>,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+    contentPadding: PaddingValues = PaddingValues(0.dp), // Nhận contentPadding
     onBack: () -> Unit = {}
 ) {
     BackHandler { onBack() }
     BusScheduleScreen(
         busSchedules = busSchedules,
         modifier = modifier,
-        contentPadding = contentPadding,
-        stopName = stopName
+        stopName = stopName,
+        contentPadding = contentPadding // Truyền xuống
     )
 }
 
 @Composable
 fun BusScheduleScreen(
-    busSchedules: List<BusSchedule>,
+    busSchedules: List<Schedule>,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
     stopName: String? = null,
     onScheduleClick: ((String) -> Unit)? = null,
+    contentPadding: PaddingValues = PaddingValues(0.dp) // Nhận contentPadding
 ) {
-    val stopNameText = if (stopName == null) {
-        stringResource(R.string.stop_name)
-    } else {
-        "$stopName ${stringResource(R.string.route_stop_name)}"
-    }
-    val layoutDirection = LocalLayoutDirection.current
-    Column(
-        modifier = modifier.padding(
-            start = contentPadding.calculateStartPadding(layoutDirection),
-            end = contentPadding.calculateEndPadding(layoutDirection),
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = contentPadding.calculateTopPadding(),
-                    bottom = dimensionResource(R.dimen.padding_medium),
-                    start = dimensionResource(R.dimen.padding_medium),
-                    end = dimensionResource(R.dimen.padding_medium),
-                )
-            ,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(stopNameText)
-            Text(stringResource(R.string.arrival_time))
-        }
-        Divider()
-        BusScheduleDetails(
-            contentPadding = PaddingValues(
-                bottom = contentPadding.calculateBottomPadding()
-            ),
-            busSchedules = busSchedules,
-            onScheduleClick = onScheduleClick
-        )
-    }
+    // Không cần Column bao ngoài nữa, LazyColumn sẽ xử lý
+    BusScheduleDetails(
+        busSchedules = busSchedules,
+        onScheduleClick = onScheduleClick,
+        modifier = modifier,
+        contentPadding = contentPadding // Truyền thẳng xuống LazyColumn
+    )
 }
-
-/*
- * Composable for BusScheduleDetails which show list of bus schedule
- * When [onScheduleClick] is null, [stopName] is replaced with placeholder
- * as it is assumed [stopName]s are the same as shown
- * in the list heading display in [BusScheduleScreen]
- */
 @Composable
 fun BusScheduleDetails(
-    busSchedules: List<BusSchedule>,
+    busSchedules: List<Schedule>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     onScheduleClick: ((String) -> Unit)? = null
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = contentPadding,
+        contentPadding = contentPadding, // Áp dụng contentPadding ở đây
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
     ) {
+        // Header cho danh sách
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(dimensionResource(R.dimen.padding_medium)),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(stringResource(R.string.stop_name))
+                Text(stringResource(R.string.arrival_time))
+            }
+            Divider()
+        }
+        // Các mục trong danh sách
         items(
             items = busSchedules,
             key = { busSchedule -> busSchedule.id }
@@ -235,34 +215,17 @@ fun BusScheduleDetails(
                     .padding(dimensionResource(R.dimen.padding_medium)),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (onScheduleClick == null) {
-                    Text(
-                        text = "--",
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = dimensionResource(R.dimen.font_large).value.sp,
-                            fontWeight = FontWeight(300)
-                        ),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1f)
-                    )
-                } else {
-                    Text(
-                        text = schedule.stopName,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = dimensionResource(R.dimen.font_large).value.sp,
-                            fontWeight = FontWeight(300)
-                        )
-                    )
-                }
+                Text(
+                    text = schedule.stopName,
+                    style = MaterialTheme.typography.bodyLarge
+                )
                 Text(
                     text = SimpleDateFormat("h:mm a", Locale.getDefault())
-                        .format(Date(schedule.arrivalTimeInMillis.toLong() * 1000)),
+                        .format(Date(schedule.arrivalTime.toLong() * 1000)),
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = dimensionResource(R.dimen.font_large).value.sp,
                         fontWeight = FontWeight(600)
                     ),
-                    textAlign = TextAlign.End,
-                    modifier = Modifier.weight(2f)
+                    textAlign = TextAlign.End
                 )
             }
         }
@@ -306,7 +269,7 @@ fun FullScheduleScreenPreview() {
     BusScheduleTheme {
         FullScheduleScreen(
             busSchedules = List(3) { index ->
-                BusSchedule(
+                Schedule( // Sửa lại
                     index,
                     "Main Street",
                     111111
@@ -324,7 +287,7 @@ fun RouteScheduleScreenPreview() {
         RouteScheduleScreen(
             stopName = "Main Street",
             busSchedules = List(3) { index ->
-                BusSchedule(
+                Schedule( // Sửa lại
                     index,
                     "Main Street",
                     111111
