@@ -32,9 +32,8 @@ class FlightSearchViewModel(
 
     // StateFlow để giữ danh sách yêu thích
     val favoriteFlights: StateFlow<List<FullFavoriteFlight>> =
-        flightDao.getAllFavorites() // Bắt đầu với Flow<List<Favorite>>
+        flightDao.getAllFavorites()
             .map { favoriteList ->
-                // Chuyển đổi List<Favorite> thành List<FullFavoriteFlight>
                 favoriteList.mapNotNull { favorite ->
                     val departure = flightDao.getAirportByCodeSuspend(favorite.departureCode)
                     val destination = flightDao.getAirportByCodeSuspend(favorite.destinationCode)
