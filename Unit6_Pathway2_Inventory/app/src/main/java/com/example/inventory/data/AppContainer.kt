@@ -28,7 +28,6 @@ interface AppContainer {
 
 class AppContainerImpl(private val context: Context) : AppContainer {
     override val itemsRepository: ItemsRepository by lazy {
-        // Lấy DAO từ cơ sở dữ liệu và "tiêm" nó vào Repository
         OfflineItemsRepository(InventoryDatabase.getDatabase(context).itemDao())
     }
 }

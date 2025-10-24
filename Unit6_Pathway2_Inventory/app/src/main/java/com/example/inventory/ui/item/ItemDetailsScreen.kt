@@ -108,7 +108,6 @@ fun ItemDetailsScreen(
             itemDetailsUiState = uiState,
             onSellItem = { viewModel.sellItem() },
             onDelete = {
-                // SỬA LẠI Ở ĐÂY: Sử dụng coroutineScope đã tạo
                 coroutineScope.launch {
                     viewModel.deleteItem()
                     navigateBack() // Quay lại màn hình trước sau khi xóa

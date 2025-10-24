@@ -26,11 +26,11 @@ object BlurAmountData {
         ),
         BlurAmount(
             blurAmountRes = R.string.blur_lv_2,
-            blurAmount = 2
+            blurAmount = 5
         ),
         BlurAmount(
             blurAmountRes = R.string.blur_lv_3,
-            blurAmount = 3
+            blurAmount = 25
         )
     )
 }

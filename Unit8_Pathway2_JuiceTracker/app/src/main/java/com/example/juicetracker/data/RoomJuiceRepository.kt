@@ -27,4 +27,8 @@ class RoomJuiceRepository(private val juiceDao: JuiceDao) : JuiceRepository {
     override suspend fun addJuice(juice: Juice) = juiceDao.insert(juice)
     override suspend fun deleteJuice(juice: Juice) = juiceDao.delete(juice)
     override suspend fun updateJuice(juice: Juice) = juiceDao.update(juice)
+
+    override fun getJuiceStreamByColor(color: String): Flow<List<Juice>> {
+        return juiceDao.getByColor(color)
+    }
 }

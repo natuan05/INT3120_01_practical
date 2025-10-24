@@ -1,4 +1,4 @@
-package com.example.busschedule.ui // Thay bằng package của bạn
+package com.example.busschedule.ui
 
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras

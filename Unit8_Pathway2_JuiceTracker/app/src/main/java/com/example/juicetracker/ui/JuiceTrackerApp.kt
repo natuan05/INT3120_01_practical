@@ -15,12 +15,19 @@
  */
 package com.example.juicetracker.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
@@ -29,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.juicetracker.ui.bottomsheet.EntryBottomSheet
 import com.example.juicetracker.ui.homescreen.AdBanner
@@ -37,6 +45,8 @@ import com.example.juicetracker.ui.homescreen.JuiceTrackerList
 import com.example.juicetracker.ui.homescreen.JuiceTrackerTopAppBar
 import kotlinx.coroutines.launch
 import com.example.juicetracker.R
+import com.example.juicetracker.data.JuiceColor
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JuiceTrackerApp(
@@ -53,6 +63,8 @@ fun JuiceTrackerApp(
 
     val scope = rememberCoroutineScope()
     val trackerState by juiceTrackerViewModel.juiceListStream.collectAsState(emptyList())
+
+    val filterState by juiceTrackerViewModel.colorFilterState.collectAsState()
 
     EntryBottomSheet(
         juiceTrackerViewModel = juiceTrackerViewModel,
@@ -85,14 +97,12 @@ fun JuiceTrackerApp(
             }
         ) { contentPadding ->
             Column(Modifier.padding(contentPadding)) {
-                AdBanner(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            top = dimensionResource(R.dimen.padding_medium),
-                            bottom = dimensionResource(R.dimen.padding_small)
-                        )
+
+                ColorFilterRow(
+                    selectedColor = filterState,
+                    onFilterChange = { color -> juiceTrackerViewModel.setFilter(color) }
                 )
+
                 JuiceTrackerList(
                     juices = trackerState,
                     onDelete = { juice -> juiceTrackerViewModel.deleteJuice(juice) },
@@ -104,6 +114,39 @@ fun JuiceTrackerApp(
                     },
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ColorFilterRow(
+    selectedColor: JuiceColor?,
+    onFilterChange: (JuiceColor?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyRow(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
+        contentPadding = PaddingValues(horizontal = dimensionResource(R.dimen.padding_medium))
+    ) {
+        item {
+            FilterChip(
+                selected = selectedColor == null,
+                onClick = { onFilterChange(null) },
+                label = { Text("Tất cả") }
+            )
+        }
+
+        items(JuiceColor.entries, key = { it }) { color ->
+            FilterChip(
+                selected = selectedColor == color,
+                onClick = { onFilterChange(color) },
+                label = { Text(stringResource(color.label)) },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = color.color.copy(alpha = 0.5f)
+                )
+            )
         }
     }
 }

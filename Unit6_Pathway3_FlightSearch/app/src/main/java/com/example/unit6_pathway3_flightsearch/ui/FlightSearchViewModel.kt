@@ -52,7 +52,6 @@ class FlightSearchViewModel(
 
     init {
         viewModelScope.launch {
-            // Đọc từ khóa tìm kiếm đã lưu khi khởi tạo
             val savedSearch = userPreferencesRepository.searchInput.first()
             _uiState.value = FlightSearchUiState(searchQuery = savedSearch)
             updateAirportSuggestions(savedSearch)
@@ -91,7 +90,7 @@ class FlightSearchViewModel(
                     selectedAirport = airport,
                     searchQuery = airport.iataCode,
                     airportSuggestions = emptyList(),
-                    flightList = destinations // <-- Cập nhật danh sách chuyến bay
+                    flightList = destinations // Cập nhật danh sách chuyến bay
                 )
             }
         }

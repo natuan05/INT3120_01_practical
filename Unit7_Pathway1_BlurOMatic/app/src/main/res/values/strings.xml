@@ -51,4 +51,7 @@
     <string name="error_cleaning_file">Error cleaning up old temporary files</string>
 
     <string name="start_over">Start Over</string>
+
+    <string name="removing_background">Removing background…</string>
+    <string name="error_removing_background">Error removing background</string>
 </resources>

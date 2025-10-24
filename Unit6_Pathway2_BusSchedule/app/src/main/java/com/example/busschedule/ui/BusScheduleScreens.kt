@@ -78,7 +78,7 @@ fun BusScheduleApp(
     val navController = rememberNavController()
     val fullScheduleTitle = stringResource(R.string.full_schedule)
     var topAppBarTitle by remember { mutableStateOf(fullScheduleTitle) }
-    val fullSchedule by viewModel.fullSchedule.collectAsState() // Sửa cách lấy dữ liệu
+    val fullSchedule by viewModel.fullSchedule.collectAsState()
     val onBackHandler = {
         topAppBarTitle = fullScheduleTitle
         navController.navigateUp()
@@ -116,8 +116,10 @@ fun BusScheduleApp(
             ) { backStackEntry ->
                 val stopName = backStackEntry.arguments?.getString(busRouteArgument)
                     ?: error("busRouteArgument cannot be null")
-                // Sửa cách lấy dữ liệu
-                val routeSchedule by viewModel.getScheduleForStop(stopName).collectAsState()
+                val routeScheduleFlow = remember(stopName, viewModel) {
+                    viewModel.getScheduleForStop(stopName)
+                }
+                val routeSchedule by routeScheduleFlow.collectAsState()
                 RouteScheduleScreen(
                     stopName = stopName,
                     busSchedules = routeSchedule,
@@ -133,13 +135,13 @@ fun FullScheduleScreen(
     busSchedules: List<Schedule>,
     onScheduleClick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp) // Nhận contentPadding
+    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     BusScheduleScreen(
         busSchedules = busSchedules,
         onScheduleClick = onScheduleClick,
         modifier = modifier,
-        contentPadding = contentPadding // Truyền xuống
+        contentPadding = contentPadding
     )
 }
 
@@ -148,7 +150,7 @@ fun RouteScheduleScreen(
     stopName: String,
     busSchedules: List<Schedule>,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp), // Nhận contentPadding
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     onBack: () -> Unit = {}
 ) {
     BackHandler { onBack() }
@@ -156,7 +158,7 @@ fun RouteScheduleScreen(
         busSchedules = busSchedules,
         modifier = modifier,
         stopName = stopName,
-        contentPadding = contentPadding // Truyền xuống
+        contentPadding = contentPadding
     )
 }
 
@@ -166,14 +168,13 @@ fun BusScheduleScreen(
     modifier: Modifier = Modifier,
     stopName: String? = null,
     onScheduleClick: ((String) -> Unit)? = null,
-    contentPadding: PaddingValues = PaddingValues(0.dp) // Nhận contentPadding
+    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    // Không cần Column bao ngoài nữa, LazyColumn sẽ xử lý
     BusScheduleDetails(
         busSchedules = busSchedules,
         onScheduleClick = onScheduleClick,
         modifier = modifier,
-        contentPadding = contentPadding // Truyền thẳng xuống LazyColumn
+        contentPadding = contentPadding
     )
 }
 @Composable

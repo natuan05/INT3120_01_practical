@@ -18,14 +18,10 @@ abstract class InventoryDatabase : RoomDatabase() {
         private var Instance: InventoryDatabase? = null
 
         fun getDatabase(context: Context): InventoryDatabase {
-            // Nếu Instance không null, trả về nó.
-            // Nếu null, thì tạo cơ sở dữ liệu.
+
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, InventoryDatabase::class.java, "item_database")
-                    /**
-                     * Thiết lập chiến lược di chuyển (migration) để xóa và xây dựng lại
-                     * thay vì di chuyển nếu không có đối tượng Migration.
-                     */
+
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }

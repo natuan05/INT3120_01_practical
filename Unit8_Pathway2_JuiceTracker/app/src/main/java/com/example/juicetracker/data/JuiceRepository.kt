@@ -25,4 +25,6 @@ interface JuiceRepository {
     suspend fun addJuice(juice: Juice)
     suspend fun deleteJuice(juice: Juice)
     suspend fun updateJuice(juice: Juice)
+
+    fun getJuiceStreamByColor(color: String): Flow<List<Juice>>
 }

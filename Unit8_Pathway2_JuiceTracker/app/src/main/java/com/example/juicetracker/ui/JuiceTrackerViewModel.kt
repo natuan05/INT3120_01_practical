@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
+import kotlinx.coroutines.flow.flatMapLatest
 /**
  * View Model which maintain states for [JuiceTrackerApp]
  */
@@ -33,7 +33,22 @@ class JuiceTrackerViewModel(private val juiceRepository: JuiceRepository) : View
     private val emptyJuice = Juice(0, "", "", JuiceColor.Red.name, 3)
     private val _currentJuiceStream = MutableStateFlow(emptyJuice)
     val currentJuiceStream: StateFlow<Juice> = _currentJuiceStream
-    val juiceListStream: Flow<List<Juice>> = juiceRepository.juiceStream
+
+    private val _colorFilterState = MutableStateFlow<JuiceColor?>(null)
+    val colorFilterState: StateFlow<JuiceColor?> = _colorFilterState
+
+
+    val juiceListStream: Flow<List<Juice>> = _colorFilterState.flatMapLatest { color ->
+        if (color == null) {
+            juiceRepository.juiceStream
+        } else {
+            juiceRepository.getJuiceStreamByColor(color.name)
+        }
+    }
+
+    fun setFilter(color: JuiceColor?) {
+        _colorFilterState.update { color }
+    }
 
     fun resetCurrentJuice() = _currentJuiceStream.update { emptyJuice }
     fun updateCurrentJuice(juice: Juice) = _currentJuiceStream.update { juice }

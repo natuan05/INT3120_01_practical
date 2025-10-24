@@ -38,4 +38,7 @@ interface JuiceDao {
 
     @Update
     suspend fun update(juice: Juice)
+
+    @Query("SELECT * FROM juice WHERE color = :color ORDER BY name ASC")
+    fun getByColor(color: String): Flow<List<Juice>>
 }

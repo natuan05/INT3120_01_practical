@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      https://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,6 +41,8 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -67,8 +69,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bluromatic.R
 import com.example.bluromatic.data.BlurAmount
 import com.example.bluromatic.ui.theme.BluromaticTheme
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
+
 @Composable
 fun BluromaticScreen(blurViewModel: BlurViewModel = viewModel(factory = BlurViewModel.Factory)) {
     val uiState by blurViewModel.blurUiState.collectAsStateWithLifecycle()
@@ -89,6 +90,7 @@ fun BluromaticScreen(blurViewModel: BlurViewModel = viewModel(factory = BlurView
             blurAmountOptions = blurViewModel.blurAmount,
             applyBlur = blurViewModel::applyBlur,
             cancelWork = { blurViewModel.cancelWork() },
+            applyRemoveBackground = { blurViewModel.applyRemoveBackground() }, // <-- THÊM MỚI
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .padding(dimensionResource(R.dimen.padding_medium))
@@ -102,6 +104,7 @@ fun BluromaticScreenContent(
     blurAmountOptions: List<BlurAmount>,
     applyBlur: (Int) -> Unit,
     cancelWork: () -> Unit,
+    applyRemoveBackground: () -> Unit, // <-- THÊM MỚI
     modifier: Modifier = Modifier
 ) {
     var selectedValue by rememberSaveable { mutableStateOf(1) }
@@ -123,11 +126,12 @@ fun BluromaticScreenContent(
         )
         BlurActions(
             blurUiState = blurUiState,
-            onStartClick = { applyBlur(selectedValue) }, // <-- Sửa lại ở đây
+            onStartClick = { applyBlur(selectedValue) },
             onSeeFileClick = { currentUri ->
                 showBlurredImage(context, currentUri)
             },
-            onCancelClick = cancelWork, // <-- Sửa lại ở đây
+            onCancelClick = cancelWork,
+            onRemoveBackgroundClick = applyRemoveBackground, // <-- THÊM MỚI
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -139,18 +143,32 @@ private fun BlurActions(
     onStartClick: () -> Unit,
     onSeeFileClick: (String) -> Unit,
     onCancelClick: () -> Unit,
+    onRemoveBackgroundClick: () -> Unit, // <-- THÊM MỚI
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically // Thêm để căn giữa vòng xoay
     ) {
         when (blurUiState) {
             is BlurUiState.Default -> {
-                Button(onClick = onStartClick, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.start))
+                // --- SỬA LẠI KHỐI NÀY ---
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+                ) {
+                    Button(onClick = onStartClick, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.start))
+                    }
+                    Button(onClick = onRemoveBackgroundClick, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.error_removing_background))
+                    }
                 }
+                // --- KẾT THÚC SỬA LẠI ---
             }
+
             is BlurUiState.Loading -> {
                 FilledTonalButton(onClick = onCancelClick) {
                     Text(stringResource(R.string.cancel_work))
@@ -158,19 +176,16 @@ private fun BlurActions(
                 CircularProgressIndicator(modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)))
             }
             is BlurUiState.Complete -> {
-                // Nút "Start Over"
                 Button(
                     onClick = onStartClick,
-                    modifier = Modifier.weight(1f) // Chia không gian
+                    modifier = Modifier.weight(1f)
                 ) {
                     Text(stringResource(R.string.start_over))
                 }
-                // Thêm khoảng cách
                 Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
-                // Thêm nút "See File"
                 FilledTonalButton(
                     onClick = { onSeeFileClick(blurUiState.outputUri) },
-                    modifier = Modifier.weight(1f) // Chia không gian
+                    modifier = Modifier.weight(1f)
                 ) {
                     Text(stringResource(R.string.see_file))
                 }
@@ -236,8 +251,9 @@ fun BluromaticScreenContentPreview() {
         BluromaticScreenContent(
             blurUiState = BlurUiState.Default,
             blurAmountOptions = listOf(BlurAmount(R.string.blur_lv_1, 1)),
-            {},
-            {},
+            applyBlur = {},
+            cancelWork = {},
+            applyRemoveBackground = {}, // <-- THÊM MỚI
             modifier = Modifier.padding(16.dp)
         )
     }

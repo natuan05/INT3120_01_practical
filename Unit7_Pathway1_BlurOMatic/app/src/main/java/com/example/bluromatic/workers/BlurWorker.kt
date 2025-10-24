@@ -46,7 +46,7 @@ class BlurWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, 
                 )
 
                 // 2. Làm mờ ảnh
-                val output = blurBitmap(picture, 1)
+                val output = blurBitmap(picture, blurLevel)
 
                 // 3. Ghi ảnh đã làm mờ vào một tệp tạm
                 val outputUri = writeBitmapToFile(applicationContext, output)

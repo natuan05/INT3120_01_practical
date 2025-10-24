@@ -39,7 +39,7 @@ class SaveImageToFileWorker(ctx: Context, params: WorkerParameters) : CoroutineW
 
             val resolver = applicationContext.contentResolver
             return@withContext try {
-                // SỬA LẠI Ở ĐÂY: Lấy URI từ đầu vào, nhưng có phương án dự phòng
+                // Lấy URI từ đầu vào, nhưng có phương án dự phòng
                 var resourceUri = inputData.getString(KEY_IMAGE_URI)
 
                 // Nếu không có URI từ đầu vào, hãy tìm tệp mới nhất trong thư mục tạm
